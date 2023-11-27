@@ -35,7 +35,7 @@ SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "upshrink.com")
 SHORTLINK_API = os.environ.get("SHORTLINK_API", "e3c0e7310e3808950688cfef4a323b759249a94b")
 VERIFY_EXPIRE = int(os.environ.get('VERIFY_EXPIRE', 300)) # Add time in seconds
 IS_VERIFY = os.environ.get("IS_VERIFY", "True")
-TUT_VID = os.environ.get("TUT_VID","illaya_tholan")
+TUT_VID = os.environ.get("TUT_VID","https://t.me/The_How_To_Open/8")
 
 
 #force sub channel id, if you want enable force sub
