@@ -53,7 +53,7 @@ async def start_command(client: Client, message: Message):
         await update_verify_status(id, is_verified=True, verified_time=time.time())
         if verify_status["link"] == "":
             reply_markup = None
-        await message.reply(f"✅ Your token successfully verified and valid for: 24 Hours", reply_markup=reply_markup, protect_content=True, quote=True)
+        await message.reply(f"✅ Your Token Successfully Verified and Valid For: 24 Hours", reply_markup=reply_markup, protect_content=True, quote=True)
 
     elif len(message.text) > 7 and verify_status['is_verified']:
         try:
@@ -136,10 +136,10 @@ async def start_command(client: Client, message: Message):
             await update_verify_status(id, verify_token=token, link="")
             link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/{client.username}?start=verify_{token}')
             btn = [
-                [InlineKeyboardButton("Click here", url=link)],
+                [InlineKeyboardButton("Click Her To Refresh Token", url=link)],
                 [InlineKeyboardButton('🗳 Tutorial 🗳', url="https://t.me/The_How_To_Open/8")]
             ]
-            await message.reply(f"Hello 👋🏻\n\nYour Ads token is expired, refresh your token and try again.\n\n<b>Token Timeout:</b> 24 Hours\n\n<b>What is the token?</b>\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 Hours after passing the ad\n\nWatch video tutorial if you're facing issue\n\n<b>APPLE/IPHONE USERS COPY TOKEN LINK AND OPEN IN CHROME BROWSER</b>", reply_markup=InlineKeyboardMarkup(btn), protect_content=True, quote=True)
+            await message.reply(f"Hello {first} 👋🏻\n\nYour Ads token is expired, refresh your token and try again.\n\n<b>Token Timeout:</b> 24 Hours\n\n<b>What is the token?</b>\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 Hours after passing the ad\n\nWatch video tutorial if you're facing issue\n\n<b>APPLE/IPHONE USERS COPY TOKEN LINK AND OPEN IN CHROME BROWSER</b>", reply_markup=InlineKeyboardMarkup(btn), protect_content=True, quote=True)
 
 
     
