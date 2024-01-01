@@ -1,4 +1,6 @@
 #(©)CodeXBotz
+#LEGENDGOD
+
 import asyncio
 import base64
 import logging
@@ -7,6 +9,7 @@ import random
 import re
 import string
 import time
+import schedule
 
 from pyrogram import Client, filters, __version__
 from pyrogram.enums import ParseMode
@@ -26,8 +29,9 @@ from config import (
     DISABLE_CHANNEL_BUTTON,
     PROTECT_CONTENT,
     TUT_VID,
+    TIME_TO_DEL
 )
-from helper_func import subscribed, encode, decode, get_messages, get_shortlink, get_verify_status, update_verify_status, get_exp_time
+from helper_func import subscribed, encode, decode, get_messages, get_shortlink, get_verify_status, update_verify_status, get_exp_time, del_msg
 from database.database import add_user, del_user, full_userbase, present_user
 from shortzy import Shortzy
 
@@ -43,17 +47,22 @@ async def start_command(client: Client, message: Message):
             pass
 
     verify_status = await get_verify_status(id)
-    if verify_status['is_verified'] and VERIFY_EXPIRE < (time.time() - verify_status['verified_time']):
-        await update_verify_status(id, is_verified=False)
-        
+    if id in ADMINS and not verify_status['is_verified']:
+        await update_verify_status(id, is_verified=True, verified_time=time.time())
+    elif verify_status['is_verified'] and VERIFY_EXPIRE < (time.time() - verify_status['verified_time']):
+        if id in ADMINS:
+            await update_verify_status(id, is_verified=True, verified_time=time.time())
+        else:
+            await update_verify_status(id, is_verified=False)
+
     if "verify_" in message.text:
         _, token = message.text.split("_", 1)
         if verify_status['verify_token'] != token:
-            return await message.reply("Your token is invalid or Expired. Try again by clickking /start")
+            return await message.reply("Your Token Is Invalid Or Expired. Try Again By Clicking /start")
         await update_verify_status(id, is_verified=True, verified_time=time.time())
         if verify_status["link"] == "":
             reply_markup = None
-        await message.reply(f"✅ Your Token Successfully Verified and Valid For: 24 Hours", reply_markup=reply_markup, protect_content=True, quote=True)
+        await message.reply(f"✅ Your Token Successfully Verified And Valid For: 24 Hours", reply_markup=reply_markup, protect_content=True, quote=True)
 
     elif len(message.text) > 7 and verify_status['is_verified']:
         try:
@@ -83,11 +92,11 @@ async def start_command(client: Client, message: Message):
                 ids = [int(int(argument[1]) / abs(client.db_channel.id))]
             except:
                 return
-        temp_msg = await message.reply("Please wait...")
+        temp_msg = await message.reply("Please Wait...")
         try:
             messages = await get_messages(client, ids)
         except:
-            await message.reply_text("Something went wrong..!")
+            await message.reply_text("Something Went Wrong..!")
             return
         await temp_msg.delete()
 
@@ -103,11 +112,15 @@ async def start_command(client: Client, message: Message):
                 reply_markup = None
 
             try:
-                await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML, reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                to_del = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML, reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
                 await asyncio.sleep(0.5)
+                if TIME_TO_DEL:
+                    schedule.every(int(TIME_TO_DEL)).seconds.do(lambda: asyncio.run(del_msg(client, to_del.chat.id, to_del.id)))
             except FloodWait as e:
                 await asyncio.sleep(e.x)
-                await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML, reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                to_del = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML, reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                if TIME_TO_DEL:
+                    schedule.every(int(TIME_TO_DEL)).seconds.do(lambda: asyncio.run(del_msg(client, to_del.chat.id, to_del.id)))
             except:
                 pass
 
@@ -139,7 +152,7 @@ async def start_command(client: Client, message: Message):
                 [InlineKeyboardButton("Click Here To Refresh Token", url=link)],
                 [InlineKeyboardButton('🗳 Tutorial 🗳', url="https://telegram.dog/The_How_To_Open/9")]
             ]
-            await message.reply(f"Hello 👋🏻\n\nYour Ads token is expired, refresh your token and try again.\n\n<b>Token Timeout:</b> 24 Hours\n\n<b>What is the token?</b>\n\nThis is an ads token. If you pass 1 ad, you can use the bot for 24 Hours after passing the ad\n\nWatch video tutorial if you're facing issue\n\n<b>APPLE/IPHONE USERS COPY TOKEN LINK AND OPEN IN CHROME BROWSER</b>", reply_markup=InlineKeyboardMarkup(btn), protect_content=True, quote=True)
+            await message.reply(f"Hello... 👋🏻\n\nYour Ads Token Is Expired, Refresh Your Token And Try Again.\n\n<b>Token Timeout:</b> 24 Hours\n\n<b>What Is The Token?</b>\n\nThis Is An Ads Token. If You Pass 1 Ad, You Can Use The Bot For 24 Hours After Passing The Ad\n\nWatch Video Tutorial If You're Facing Issue\n\n<b>APPLE/IPHONE USERS COPY TOKEN LINK AND OPEN IN CHROME BROWSER</b>", reply_markup=InlineKeyboardMarkup(btn), protect_content=True, quote=True)
 
 
     
@@ -148,7 +161,7 @@ async def start_command(client: Client, message: Message):
 
 WAIT_MSG = """"<b>Processing ...</b>"""
 
-REPLY_ERROR = """<code>Use this command as a replay to any telegram message with out any spaces.</code>"""
+REPLY_ERROR = """<code>Use This Command As A Replay To A Telegram Message Without Any Spaces.</code>"""
 
 #=====================================================================================##
 
@@ -159,7 +172,7 @@ async def not_joined(client: Client, message: Message):
     buttons = [
         [
             InlineKeyboardButton(
-                "Join Channel",
+                "⚡ Join ⚡",
                 url = client.invitelink)
         ]
     ]
@@ -188,11 +201,12 @@ async def not_joined(client: Client, message: Message):
         disable_web_page_preview = True
     )
 
+
 @Bot.on_message(filters.command('users') & filters.private & filters.user(ADMINS))
 async def get_users(client: Bot, message: Message):
     msg = await client.send_message(chat_id=message.chat.id, text=WAIT_MSG)
     users = await full_userbase()
-    await msg.edit(f"{len(users)} users are using this bot")
+    await msg.edit(f"<b>👥 Total Users :</b> {len(users)}")
 
 @Bot.on_message(filters.private & filters.command('broadcast') & filters.user(ADMINS))
 async def send_text(client: Bot, message: Message):
@@ -205,7 +219,7 @@ async def send_text(client: Bot, message: Message):
         deleted = 0
         unsuccessful = 0
         
-        pls_wait = await message.reply("<i>Broadcasting Message.. This will Take Some Time</i>")
+        pls_wait = await message.reply("<i>Broadcasting Message... This Will Take Some Time</i>")
         for chat_id in query:
             try:
                 await broadcast_msg.copy(chat_id)
@@ -225,7 +239,7 @@ async def send_text(client: Bot, message: Message):
                 pass
             total += 1
         
-        status = f"""<b><u>Broadcast Completed</u>
+        status = f"""<b><u>Broadcast Completed ✅</u>
 
 Total Users: <code>{total}</code>
 Successful: <code>{successful}</code>
