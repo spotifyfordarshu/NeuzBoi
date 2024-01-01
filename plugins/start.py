@@ -152,7 +152,17 @@ async def start_command(client: Client, message: Message):
                 [InlineKeyboardButton("Click Here To Refresh Token", url=link)],
                 [InlineKeyboardButton('🗳 Tutorial 🗳', url="https://telegram.dog/The_How_To_Open/9")]
             ]
-            await message.reply(f"Hello... 👋🏻\n\nYour Ads Token Is Expired, Refresh Your Token And Try Again.\n\n<b>Token Timeout:</b> 24 Hours\n\n<b>What Is The Token?</b>\n\nThis Is An Ads Token. If You Pass 1 Ad, You Can Use The Bot For 24 Hours After Passing The Ad\n\nWatch Video Tutorial If You're Facing Issue\n\n<b>APPLE/IPHONE USERS COPY TOKEN LINK AND OPEN IN CHROME BROWSER</b>", reply_markup=InlineKeyboardMarkup(btn), protect_content=True, quote=True)
+            await message.reply(f"""<b>👋 Hello...</b> {message.from_user.mention}
+
+<b>⚠️ Your Ads Token Is Expired, Refresh Your Token And Try Again.</b>
+
+<b>What Is The Token?</b>
+
+<i>This Is An Ads Token. If You Pass 1 Ad, You Can Use The Bot For 24 Hours After Passing The Ad
+
+Watch Video Tutorial If You're Facing Issue
+
+<b>APPLE/IPHONE USERS COPY TOKEN LINK AND OPEN IN CHROME BROWSER</b></i>""", reply_markup=InlineKeyboardMarkup(btn), protect_content=True, quote=True)
 
 
     
@@ -253,3 +263,4 @@ Unsuccessful: <code>{unsuccessful}</code></b>"""
         msg = await message.reply(REPLY_ERROR)
         await asyncio.sleep(8)
         await msg.delete()
+                                   
