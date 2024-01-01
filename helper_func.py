@@ -10,12 +10,20 @@ from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.errors import FloodWait
 from shortzy import Shortzy
 import requests
-import time
+import time, schedule
 from datetime import datetime
 from database.database import user_data, db_verify_status, db_update_verify_status
 
 #logger = logging.getLogger(__name__)
 #logger.setLevel(logging.INFO)
+
+async def del_msg(client, chat_id, message_id):
+    try:
+        await client.delete_messages(chat_id, message_id)
+        return schedule.CancelJob
+    except Exception as uff:
+        print(uff)
+        pass
 
 async def is_subscribed(filter, client, update):
     if not FORCE_SUB_CHANNEL:
