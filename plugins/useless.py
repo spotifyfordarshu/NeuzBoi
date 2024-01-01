@@ -4,6 +4,7 @@ from pyrogram import filters
 from config import ADMINS, BOT_STATS_TEXT, USER_REPLY_TEXT
 from datetime import datetime
 from helper_func import get_readable_time
+from random import choice
 
 @Bot.on_message(filters.command('stats') & filters.user(ADMINS))
 async def stats(bot: Bot, message: Message):
@@ -16,4 +17,7 @@ async def stats(bot: Bot, message: Message):
 @Bot.on_message(filters.private & filters.incoming)
 async def useless(_,message: Message):
     if USER_REPLY_TEXT:
-        await message.reply(USER_REPLY_TEXT)
+        if isinstance(USER_REPLY_TEXT, list):
+            await message.reply(choice(USER_REPLY_TEXT))
+        else:
+            await message.reply(USER_REPLY_TEXT)
