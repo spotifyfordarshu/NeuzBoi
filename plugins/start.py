@@ -1,6 +1,3 @@
-#(©)CodeXBotz
-#LEGENDGOD
-
 import asyncio
 import base64
 import logging
@@ -150,7 +147,7 @@ async def start_command(client: Client, message: Message):
             link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/{client.username}?start=verify_{token}')
             btn = [
                 [InlineKeyboardButton("Click Here To Refresh Token", url=link)],
-                [InlineKeyboardButton('🗳 Tutorial 🗳', url="https://telegram.dog/The_How_To_Open/9")]
+                [InlineKeyboardButton('🗳 Tutorial 🗳', url="https://telegram.dog/VLWlinkopen/16")]
             ]
             await message.reply(f"""<b>👋 Hello...</b> {message.from_user.mention}
 
@@ -182,7 +179,7 @@ async def not_joined(client: Client, message: Message):
     buttons = [
         [
             InlineKeyboardButton(
-                "⚡ Join ⚡",
+                " 🔥 Join Channel 🔥 ",
                 url = client.invitelink)
         ]
     ]
