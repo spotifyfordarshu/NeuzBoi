@@ -147,7 +147,7 @@ async def start_command(client: Client, message: Message):
             link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, f'https://telegram.dog/{client.username}?start=verify_{token}')
             btn = [
                 [InlineKeyboardButton("Click Here To Refresh Token", url=link)],
-                [InlineKeyboardButton('🗳 Tutorial 🗳', url="https://telegram.dog/VLWlinkopen/16")]
+                [InlineKeyboardButton('🗳 Tutorial 🗳', url="https://telegram.dog/VLWlinkopen/6")]
             ]
             await message.reply(f"""<b>👋 Hello...</b> {message.from_user.mention}
 
